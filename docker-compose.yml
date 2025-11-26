@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  func-analise-dados:
+    image: func-analise-dados
+    build: .
+    ports:
+      - "7071:80"
+    environment:
+      SQL_CONNECTION_STRING: "CHAVE"
+      STORAGE_CONNECTION_STRING: "CHAVE"
+      AzureWebJobsStorage: "CHAVE"
+    restart: unless-stopped

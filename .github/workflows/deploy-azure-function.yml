@@ -1,0 +1,32 @@
+name: Build and Deploy Azure Function App (Docker)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Git repo
+        uses: actions/checkout@v3
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+
+      - name: Build Docker image
+        run: |
+          docker build . -t func-analise-dados
+
+      - name: Deploy container to Azure Function App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          images: func-analise-dados
+
+      - name: Azure logout
+        run: az logout
