@@ -13,11 +13,6 @@ jobs:
       - name: Checkout Git repo
         uses: actions/checkout@v3
 
-      - name: Log in to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-
       - name: Build Docker image
         run: |
           docker build . -t func-analise-dados
@@ -27,6 +22,4 @@ jobs:
         with:
           app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           images: func-analise-dados
-
-      - name: Azure logout
-        run: az logout
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
