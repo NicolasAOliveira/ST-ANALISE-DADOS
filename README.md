@@ -26,8 +26,6 @@ O sistema suporta upload de bases CSV, cálculo de métricas (RMSE, MSE, R²) e 
 - **Volume esperado:** Aproximadamente 30 MB no banco de dados SQL.  
 - **Licenciamento:** Uso acadêmico para a disciplina, conforme diretrizes do curso e do professor.
 
-O dataset representa uma série temporal não estacionária, com forte tendência, usada para treinar e testar o modelo preditivo da coluna `time`.  
-
 **Esquema principal das colunas:**
 
 - `time` — variável alvo  
@@ -115,7 +113,7 @@ graph TD
 1. **Upload** da base de treino em CSV para o Blob Storage.  
 2. **`/api/train`**  
    - Leitura do CSV.  
-   - Normalização _min-max_.  
+   - Normalização z-score.  
    - Treino da regressão linear.  
    - Cálculo de RMSE, MSE e R².  
    - Salvamento do modelo (`.joblib`) no Blob.  
