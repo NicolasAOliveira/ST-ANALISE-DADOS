@@ -39,36 +39,67 @@ O dataset representa uma série temporal não estacionária, com forte tendênci
 
 ### Diagrama (Mermaid / Arquitetura)
 
-flowchart LR
-    %% Seções principais
-    subgraph Armazenamento
-        A1[Azure Blob Storage<br/>Dados brutos (CSV/JSON)]
+```mermaid
+graph TD
+    %% Definição do grupo de Armazenamento
+    subgraph Armazenamento [Armazenamento de Dados]
+        A1("Arquivo CSV")
+        A2("Azure Blob Storage<br/>(Dados Brutos e CSV Saída)")
+        S1("Azure SQL Database<br/>(Métricas e Tabela Previsões)")
     end
 
-    subgraph Processamento
-        B1[Azure Functions (Python)<br/>ou Azure Container Apps]
-        B2[Seu código Python/Pandas]
+    %% Definição do grupo de Processamento
+    subgraph Processamento [Processamento Backend]
+        P1("Azure Functions<br/>(Ambiente Serverless)")
+        P2("Código Python<br/>(Regressão Linear)")
     end
 
-    subgraph Visualizacao[Visualização]
-        C1[Criação do painel de insights]
-        C2[Dashboard Front-end]
+    %% Definição do grupo de Visualização
+    subgraph Visualizacao [Visualização]
+        V1("Geração do Dashboard<br/>(Via código Python)")
+        V2("Dashboard Front-end<br/>(Web)")
     end
 
-    subgraph CICD[Desenvolvimento / CI/CD]
-        D1[Docker<br/>Empacotamento]
-        D2[GitHub Actions<br/>Automatiza implantação]
+    %% Definição do grupo CI/CD
+    subgraph CICD [Desenvolvimento CI/CD]
+        D1("Docker<br/>Empacotar")
+        D2("GitHub Actions<br/>Automatiza a implantação")
     end
 
-    %% Fluxos principais
-    A1 --> B1
-    B1 --> B2
-    B1 --> C1
-    C1 --> C2
+    %% --- FLUXO DE DADOS ---
+    
+    %% 1. Entrada de dados
+    A1 --> A2
+    A2 --> P1
+    
+    %% 2. Execução do Algoritmo
+    P1 --> P2
+    
+    %% 3. Saída do Algoritmo (Salva no SQL e volta CSV para o Blob)
+    P2 -- Salva Métricas e Dados --> S1
+    P2 -- Salva CSV Predições --> A2
 
-    %% CI/CD
-    D1 --> D2
-    D2 --> B1
+    %% 4. Geração do Dashboard (Puxa do SQL, gerado pela Function)
+    P1 --> V1
+    S1 -- Alimenta com Dados --> V1
+    V1 --> V2
+
+    %% --- FLUXO DE DEPLOY (CI/CD) ---
+    StartDev(Início Desenvolvimento) -.-> D1
+    D1 -.-> D2
+    D2 -.-> P1
+
+    %% Estilização
+    classDef azure fill:#0078d4,stroke:none,color:white;
+    classDef github fill:#24292e,stroke:none,color:white;
+    classDef container fill:#ffffff,stroke:#333,color:#333;
+    classDef sql fill:#b8d6f5,stroke:#0078d4,color:#003a66;
+
+    class A2,P1 azure;
+    class S1 sql;
+    class D2 github;
+    class A1,P2,V1,V2,D1,StartDev container;
+```
 
 ### Principais Componentes
 
