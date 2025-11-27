@@ -39,43 +39,36 @@ O dataset representa uma série temporal não estacionária, com forte tendênci
 
 ### Diagrama (Mermaid / Arquitetura)
 
-graph LR
-    subgraph Armazenamento [Armazenamento]
-        A2[CSV / JSON<br>Arquivos] --> A1[Azure Blob Storage<br>Dados Brutos]
-        A1 --> A3[Azure Blob Storage<br>Dados Processados]
+flowchart LR
+    %% Seções principais
+    subgraph Armazenamento
+        A1[Azure Blob Storage<br/>Dados brutos (CSV/JSON)]
     end
 
-    subgraph Processamento [Processamento]
-        P1[Azure Functions /<br>Container Apps]
-        P2[Código Python<br>Modelo]
+    subgraph Processamento
+        B1[Azure Functions (Python)<br/>ou Azure Container Apps]
+        B2[Seu código Python/Pandas]
     end
 
-    subgraph Visualizacao [Visualização]
-        V1[Painel de Insights] --> V2[Dashboard Front-end]
+    subgraph Visualizacao[Visualização]
+        C1[Criação do painel de insights]
+        C2[Dashboard Front-end]
     end
 
-    subgraph Automacao [CI/CD]
-        D1[Docker<br>Empacotar]
-        G1[GitHub Actions<br>Pipeline de Deploy]
+    subgraph CICD[Desenvolvimento / CI/CD]
+        D1[Docker<br/>Empacotamento]
+        D2[GitHub Actions<br/>Automatiza implantação]
     end
 
-    %% Fluxo de Dados
-    A1 --> P1
-    A3 -.-> P1
-    P1 --> P2
-    P1 --> V1
+    %% Fluxos principais
+    A1 --> B1
+    B1 --> B2
+    B1 --> C1
+    C1 --> C2
 
-    %% Fluxo de CI/CD (O GitHub Actions realiza o deploy)
-    D1 -.-> G1
-    G1 -.-> P1
-    G1 -.-> V2
-    
-    %% Estilização
-    style A1 fill:#0078d4,stroke:#fff,color:#fff
-    style A3 fill:#0078d4,stroke:#fff,color:#fff
-    style P1 fill:#0078d4,stroke:#fff,color:#fff
-    style V2 fill:#fff,stroke:#333,color:#333
-    style G1 fill:#24292e,stroke:#fff,color:#fff
+    %% CI/CD
+    D1 --> D2
+    D2 --> B1
 
 ### Principais Componentes
 
