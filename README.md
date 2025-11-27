@@ -1,5 +1,5 @@
 # Sistema de Treinamento e Previsão em Nuvem com Regressão Linear  
-### Sistema de Análise de Dados
+### Sistema Simples de Análise de Dados
 
 ## Equipe
 
@@ -39,7 +39,44 @@ O dataset representa uma série temporal não estacionária, com forte tendênci
 
 ### Diagrama (Mermaid / Arquitetura)
 
-![Arquitetura da solução](<img width="1024" height="645" alt="image" src="https://github.com/user-attachments/assets/7dd2f7b4-b0b8-4824-8cc0-ed416b275c7a" />)
+graph TD
+    subgraph Armazenamento [Armazenamento]
+        A1[Azure Blob Storage<br>Para Dados Brutos]
+        A2[CSV / JSON<br>Arquivos]
+        A3[Azure Blob Storage<br>Para Dados processados]
+    end
+
+    subgraph Processamento [Processamento]
+        P1[Azure Functions ou<br>Azure Container Apps]
+        P2[Código Python/Pandas<br>do Colab]
+    end
+
+    subgraph Visualização_CICD [Visualização e CI/CD]
+        V1[Criação do painel<br>de insights]
+        V2[Dashboard Front-end]
+        D1[Docker<br>Empacotar]
+        G1[GitHub Actions<br>Automatiza a implantação]
+    end
+
+    A2 --> A3
+    A1 --> P1
+    P1 --> P2
+    P1 --> V1
+    V1 --> V2
+    V2 --> G1
+    D1 -.-> G1
+
+    %% Conexão de fluxo de dados
+    A3 --> P2
+
+    %% Conexão de desenvolvimento
+    D0[Desenvolvimento<br>CI/CD] -.-> D1
+    
+    style A1 fill:#0078d4,stroke:#fff,color:#fff
+    style A3 fill:#0078d4,stroke:#fff,color:#fff
+    style P1 fill:#0078d4,stroke:#fff,color:#fff
+    style V2 fill:#fff,stroke:#333,color:#333
+    style G1 fill:#24292e,stroke:#fff,color:#fff
 
 ### Principais Componentes
 
