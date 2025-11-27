@@ -5,7 +5,7 @@
 
 - **Nicolas Alencar de Oliveira** — Matrícula: 23012092 — E-mail: nicolas.ao@puccampinas.edu.br  
 - **Vitor Martins Pinto** — Matrícula: 23020961 — E-mail: vitor.mp2@puccampinas.edu.br  
-- **Lucas Gaino Sarzedo** — Matrícula: 23008146 — E-mail: _- _  
+- **Lucas Gaino Sarzedo** — Matrícula: 23008146 — E-mail: Lucas.gs13@puccampinas.edu.br
 
 ---
 
@@ -39,7 +39,7 @@ O dataset representa uma série temporal não estacionária, com forte tendênci
 
 ### Diagrama (Mermaid / Arquitetura)
 
-![Arquitetura da solução](https://github.com/user-attachments/assets/ca7ca4c1-5bba-4f1d-a399-4ce67e7d64aa)
+![Arquitetura da solução](<img width="1024" height="645" alt="image" src="https://github.com/user-attachments/assets/7dd2f7b4-b0b8-4824-8cc0-ed416b275c7a" />)
 
 ### Principais Componentes
 
