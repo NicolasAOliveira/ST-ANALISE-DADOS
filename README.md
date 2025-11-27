@@ -1,186 +1,85 @@
-Sistema de Treinamento e Previsão em Nuvem com Regressão Linear
-Sistema simples de analise de dados
+Sistema de Treinamento e Previsão em Nuvem com Regressão Linear​ Sistema de Análise de Dados
 
-Sistema de Análise e Previsão Remota de Séries Temporais
-
-Nicolas Alencar de Oliveira
-Matrícula: [preencher]
-E-mail: [preencher]
+Equipe
+Nicolas Alencar de Oliveira — Matrícula: 23012092 — E-mail: nicolas.ao@puccampinas.edu.br​
+Vitor Martins Pinto — Matrícula: 23020961 — E-mail: vitor.mp2@puccampinas.edu.br​
+Lucas Gaino Sarzedo — Matrícula: - — E-mail: -
 
 Descrição Geral
-Este projeto implementa um sistema completo em nuvem para:
-
--Treinar remotamente um modelo de regressão linear usando arquivos CSV enviados ao sistema;
--Processar e validar conjuntos de teste;
--Executar o modelo em produção;
--Armazenar previsões, métricas de desempenho e artefatos de modelo;
--Manter histórico completo de execuções e versões do modelo;
--Fornecer previsões e resultados para posterior análise em dashboards (ex.: Power BI).
--O sistema foi desenvolvido como solução escalável para análise de séries temporais, onde o objetivo é prever o valor da coluna time usando os cinco momentos anteriores (time1 a time5).
+Sistema em nuvem para análise e previsão de séries temporais, com foco em um modelo de regressão linear que prevê a coluna time a partir dos cinco valores anteriores (time1 a time5).​
+O objetivo é permitir treino remoto, execução em produção, versionamento de modelos e disponibilização de resultados para dashboards no Front-end.​
+O sistema suporta upload de bases CSV, cálculo de métricas (RMSE, MSE, R²) e histórico completo de execuções e versões do modelo em um ambiente escalável.​
 
 Dataset
+Fonte: Dataset fornecido pelo professor Fernando da disciplina de Aprendizado Supervisionado, em formato CSV.​
+https://puc-campinas.instructure.com/files/3371440/download?download_frd=1
 
--Formato: CSV
--Origem: Dataset fornecido pelo professor da disciplina
--Volume: Aproximadamente [x] linhas (preencher se quiser)
+Volume de dados esperado: aproximadamente 30 Mb no banco de dados SQL.​
 
-Finalidade:
-Treinamento e teste de um modelo preditivo para séries temporais não estacionárias, com forte tendência.
+Licenciamento: uso acadêmico para a disciplina, conforme diretrizes do curso e do professor (preencher se houver licença explícita do dataset).​
 
-Esquema das colunas:
-Coluna	Descrição
-time	Valor alvo a ser previsto
-time1	Valor observado 1 passo antes
-time2	Valor observado 2 passos antes
-time3	Valor observado 3 passos antes
-time4	Valor observado 4 passos antes
-time5	Valor observado 5 passos antes
+O dataset representa uma série temporal não estacionária, com forte tendência, usada para treinar e testar o modelo preditivo da coluna time.​
+Esquema das colunas principais: time (alvo), time1, time2, time3, time4 e time5 (defasagens temporais usadas como preditores).​
 
 Arquitetura da Solução
-A solução utiliza a arquitetura moderna de processamento distribuído em nuvem:
+Diagrama em Mermaid:
 
-flowchart TD
-    A[Usuário envia CSV] --> B[Azure Blob Storage]
-    B --> C[Azure Functions - API]
-    C -->|Treino| D[Azure SQL Database<br/>model_versions, executions]
-    C -->|Previsões| D
-    C -->|Artefatos| E[Blob Storage - models/, outputs/]
-    D --> F[Dashboard Power BI ou front-end]
+<img width="1024" height="645" alt="image" src="https://github.com/user-attachments/assets/ca7ca4c1-5bba-4f1d-a399-4ce67e7d64aa" />
 
-Componentes:
+Principais componentes:
 
-Azure Blob Storage
-Armazena dados brutos, artefatos de modelo e arquivos de saída.
+Azure Blob Storage: armazena dados brutos, artefatos de modelo e arquivos de saída (previsões exportadas).​
 
-Azure Functions (Python)
-Implementa endpoints:
+Azure Functions (Python): expõe endpoints /api/train, /api/test, /api/reset, /api/processamento para treino e /api/dashboard para dashboard, reset e healthcheck da aplicação.​
 
-/api/train → treina modelo
-/api/test → executa previsões
-/api/reset → redefine modelo
-/api/processamento → teste básico da função
+Azure SQL Database: armazena versões de modelo (model_versions), execuções (executions), métricas (RMSE, MSE, R²) e logs.​
 
-Azure SQL Database
-Gerencia:
+Dashboard web: consulta diretamente o banco SQL e/ou arquivos no Blob para visualização de previsões e métricas.​
 
-versões de modelo (model_versions)
-execuções (executions)
-métricas (RMSE, MSE, R²)
-logs operacionais
+Docker + docker-compose: padroniza o ambiente local de desenvolvimento e execução da Azure Function.​
 
-Power BI (ou dashboard Web)
-Leitura direta do SQL Database para visualização das previsões e métricas.
+GitHub Actions: provê pipeline de CI/CD para build, testes e deploy automático da Azure Function App.​
 
-Docker + docker-compose
-Ambiente de desenvolvimento local padronizado.
+Fluxo resumido:
 
-GitHub Actions
-Pipeline CI/CD para deploy automático da Azure Function.
+Upload de base de treino em CSV para o Blob.
 
-Fluxo de Funcionalidades
-✔ 1. Upload da Base de Treino
+/api/train: leitura do CSV, normalização min-max, treino da regressão linear, cálculo de RMSE, MSE e R², salvamento do modelo (.joblib) no Blob e registro no SQL.​
 
-Arquivo CSV enviado ao Blob Storage.
+/api/test: carregamento do modelo, aplicação do mesmo pré-processamento, geração de previsões, gravação de CSV de saída no Blob e registro de execução e métricas no SQL.​
 
-✔ 2. Treino Remoto
+/api/reset: recriação/limpeza da tabela de modelos para recomeçar o histórico.​
 
-Endpoint /api/train:
+/api/dashboard: Gera os dashboard para visualização.
 
-Lê o CSV
+Demonstração
 
-Normaliza dados (min-max)
-Treina regressão linear
-Gera métricas do modelo (RMSE, MSE, R²)
-Cria versão do modelo
-Salva artefato .joblib no Blob
-Escreve métricas e versão no SQL
+Capturas de tela do dashboard:
 
-✔ 3. Upload da Base de Teste
+<img width="1847" height="912" alt="Captura de tela 2025-11-26 180758" src="https://github.com/user-attachments/assets/c14ff066-766d-41dc-981d-5ebfda2a6582" />
 
-Arquivo CSV de teste também entra no Blob.
+<img width="1850" height="910" alt="image" src="https://github.com/user-attachments/assets/b97de55a-a09c-4bad-88a2-9f0f12a0d152" />
 
-✔ 4. Execução / Previsão
+Gráfico comparando valores reais × previstos da série temporal.​
 
-Endpoint /api/test:
+Visualização do histórico de RMSE, MSE e R² por versão de modelo.​
 
-Carrega o modelo treinado
-Aplica o pré-processamento
-Gera previsões
-Salva CSV de saída no Blob
-Registra execução e métricas no SQL
+Painel com filtro por versão do modelo e por período de tempo.​
 
-✔ 5. Reset do Modelo
-
-Endpoint /api/reset recria a tabela de modelos.
-
-Métricas de Avaliação
-
-O sistema calcula automaticamente:
-RMSE – Root Mean Squared Error
-MSE – Mean Squared Error
-R² – Coeficiente de Determinação
-
-Esses valores ficam registrados no SQL Database.
-
-Estrutura do Repositório
-/project-root
-│── function_app.py
-│── requirements.txt
-│── host.json
-│── local.settings.json (não vai para o GitHub)
-│── dockerfile
-│── docker-compose.yml
-│── /docs
-│── /sql
-│── /images
-│── README.md
-
-CI/CD – GitHub Actions
-
-Pipeline realiza:
-
-Build da Azure Function
-Testes automatizados
-Deploy para Azure Function App
-Limpeza de versões antigas
-
-Como Executar Localmente (Docker)
-docker build -t func-analise .
-docker run -p 7071:7071 func-analise
-
-
-A API ficará disponível em:
-http://localhost:7071/api/train
-
-Como Usar na Nuvem
-✔ Treinar modelo:
-POST https://NOME-DA-FUNCTION.azurewebsites.net/api/train
-
-✔ Testar modelo:
-POST https://NOME-DA-FUNCTION.azurewebsites.net/api/test
-
-✔ Verificar healthcheck:
-GET https://NOME-DA-FUNCTION.azurewebsites.net/api/processamento
-
-Dashboard
-
-O dashboard analítico foi construído em Power BI, consumindo diretamente:
-Tabela model_versions
-Tabela executions
-Previsões armazenadas no Blob
-
-Inclui:
-
-Histórico de RMSE
-Comparação real × previsto
-Evolução das versões do modelo
-Tendências da série temporal
-(Inserir prints depois)
+Link para vídeo de demo:
 
 Referências
+Documentação Azure Functions Python.​ 
+https://learn.microsoft.com/pt-br/azure/machine-learning/tutorial-designer-automobile-price-train-score?view=azureml-api-1
 
-Azure Functions Python Docs
-Azure Blob Storage SDK
-Azure SQL Database
-scikit-learn — LinearRegression
-pandas, joblib, SQLAlchemy
+SDK do Azure Blob Storage e Azure SQL Database.​ 
+https://learn.microsoft.com/pt-br/azure/machine-learning/tutorial-designer-automobile-price-train-score?view=azureml-api-1​
+
+scikit-learn (LinearRegression, métricas de regressão).​ 
+https://www.datacamp.com/pt/tutorial/sklearn-linear-regression
+
+pandas, joblib, SQLAlchemy para manipulação de dados, serialização de modelos e acesso ao banco.​ 
+https://www.datacamp.com/pt/tutorial/sklearn-linear-regression
+
+Materiais da disciplina e documentação institucional do curso para definição do escopo acadêmico do projeto.​ 
+https://ufape.edu.br/sites/default/files/2025-06/PPC%20perfil%203-2024%20de%20BCC.pdf
