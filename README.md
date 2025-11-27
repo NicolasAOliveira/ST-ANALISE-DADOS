@@ -142,8 +142,7 @@ graph TD
 **Principais visualizações:**
 
 - Gráfico comparando valores reais × previstos da série temporal.  
-- Visualização do histórico de RMSE, MSE e R² por versão de modelo.  
-- Painel com filtro por versão do modelo e por período de tempo.  
+- Visualização do histórico de RMSE, MSE e R² por versão de modelo.   
 
 ### Vídeo de Demonstração
 
