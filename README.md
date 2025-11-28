@@ -168,4 +168,4 @@ graph TD
   - https://docs.sqlalchemy.org/  
 
 - Materiais da disciplina e documentação institucional do curso para definição do escopo acadêmico do projeto.  
-  - https://ufape.edu.br/sites/default/files/2025-06/PPC%20perfil%203-2024%20de%20BCC.pdf
+  - (https://puc-campinas.instructure.com/courses/81198/pages/projeto-final-sistema-de-dados-em-nuvem?module_item_id=521360)
